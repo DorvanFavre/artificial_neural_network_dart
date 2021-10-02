@@ -17,4 +17,8 @@ class RandomInitializer implements Initializer {
   double initializeWeight() {
     return Random().nextDouble();
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'random';
 }

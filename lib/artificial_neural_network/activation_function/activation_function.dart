@@ -17,9 +17,25 @@ abstract class ActivationFunction {
     return None();
   }
 
+  factory ActivationFunction.fromName(String name) {
+    switch (name) {
+      case 'relu':
+        return Relu();
+      case 'sigmoid':
+        return Sigmoid();
+      case 'softplus':
+        return Softplus();
+      case 'none':
+        return None();
+      default:
+        return None();
+    }
+  }
+
   const ActivationFunction();
   String summary();
 
   double call(double input);
   double derivative(double input);
+  final String name = '';
 }

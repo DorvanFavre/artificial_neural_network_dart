@@ -32,4 +32,8 @@ class SoftMax implements OutputFunction {
   String summary() {
     return 'Softmax';
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'softmax';
 }

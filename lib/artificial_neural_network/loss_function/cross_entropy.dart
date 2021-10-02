@@ -27,4 +27,8 @@ class CrossEntropy implements LossFunction {
     }
     return sum;
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'crossEntropy';
 }

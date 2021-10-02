@@ -1,4 +1,8 @@
 import 'dart:math';
+import 'dart:convert' as convert;
+import 'dart:io' as io;
+import 'package:artificial_neural_network/artificial_neural_network/layer/dense_layer.dart';
+import 'package:path_provider/path_provider.dart' as pp;
 
 import 'package:artificial_neural_network/artificial_neural_network/activation_function/activation_function.dart';
 import 'package:artificial_neural_network/artificial_neural_network/ann/ann.dart';
@@ -33,12 +37,90 @@ import 'package:artificial_neural_network/artificial_neural_network/results/pred
 ///   - Sigmoid : totaly avoid overflow, learning rate (0.1) <--- BEEEEEST
 ///
 class ANN4 implements ANN {
+  static final String nameField = 'name';
+  static final String numberOfInputsField = 'numberOfInputs';
+  static final String initializerField = 'initializer';
+  static final String lossFunctionField = 'lossFunction';
+  static final String outputFunctionField = 'outputFunction';
+  static final String learningRateField = 'learningRate';
+  static final String isBuiltField = 'isBuilt';
+
+  static final String numberOfLayersField = 'numberOfLayers';
+  static final String numberOfNeuronesField = 'numberOfNeurones';
+  static final String activationFunctionField = 'activationFunction';
+  static final String weightsField = 'weights';
+  static final String biasField = 'bias';
+
   final List<Layer> layers;
   final int numberOfInputs;
   final Initializer initializer;
   final LossFunction lossFunction;
   final OutputFunction outputFunction;
   final double learningRate;
+  final String name;
+
+  static Future<ANN4> fromFile({required String file}) async {
+    // Read file
+    final f = io.File(file);
+    final json = await f.readAsString();
+    final map = convert.json.decode(json) as Map<String, dynamic>;
+
+    print(map);
+
+    final name = map[nameField];
+    final initializer = Initializer.fromName(map[initializerField]);
+    final lossFunction = LossFunction.fromName(map[lossFunctionField]);
+    final numberOfInputs = map[numberOfInputsField];
+    final outputFunction = OutputFunction.fromName(map[outputFunctionField]);
+    final learningRate = map[learningRateField];
+    final numberOfLayers = map[numberOfLayersField];
+    final isBuilt = map[isBuiltField] as bool;
+
+    final List<Layer> layers = List.empty(growable: true);
+    for (int i = 0; i < numberOfLayers; i++) {
+      final layer = 'layer' + i.toString();
+      final numberOfNeurones = map[layer][numberOfNeuronesField];
+      final activationFunction =
+          ActivationFunction.fromName(map[layer][activationFunctionField]);
+
+      final a = map[layer][weightsField];
+      print('\n\n');
+      print(a);
+      print(a.runtimeType);
+      final b = a[0];
+      print(b);
+      print(b.runtimeType);
+      final c = (b as List).cast<double>();
+      print(c);
+      print(c.runtimeType);
+      final d = c[0] as double;
+      print(d);
+      print(d.runtimeType);
+
+      final weights = Matrix(
+          matrix: (map[layer][weightsField] as List).cast<List<double>>());
+
+      final bias = Matrix(
+          matrix: ((map[layer][biasField] as List).cast<List>() as List)
+              .cast<List<double>>());
+
+      layers.add(DenseLayer(
+          numberOfNeurones: numberOfNeurones,
+          activationFunction: activationFunction,
+          weights: weights,
+          bias: bias));
+    }
+
+    return ANN4(
+        name: name,
+        layers: layers,
+        numberOfInputs: numberOfInputs,
+        initializer: initializer,
+        lossFunction: lossFunction,
+        outputFunction: outputFunction,
+        learningRate: learningRate,
+        isBuilt: isBuilt);
+  }
 
   ANN4(
       {required this.layers,
@@ -46,26 +128,74 @@ class ANN4 implements ANN {
       required this.initializer,
       required this.lossFunction,
       required this.outputFunction,
-      required this.learningRate}) {}
+      required this.learningRate,
+      this.name = 'Unknown',
+      this.isBuilt = false});
 
-  bool isBuilt = false;
+  bool isBuilt;
 
   void build() {
-    Layer? previousLayer = null;
-    layers.forEach((layer) {
-      layer.build(
-          numberOfInputs: previousLayer?.numberOfNeurones ?? numberOfInputs,
-          initializer: initializer);
-      previousLayer = layer;
-    });
-    isBuilt = true;
+    if (!isBuilt) {
+      Layer? previousLayer = null;
+      layers.forEach((layer) {
+        layer.build(
+            numberOfInputs: previousLayer?.numberOfNeurones ?? numberOfInputs,
+            initializer: initializer);
+        previousLayer = layer;
+      });
+      isBuilt = true;
+    } else {
+      print('Model already built !');
+    }
+  }
+
+  Future<void> saveToFile() async {
+    Map map = Map();
+    // Map
+
+    // Ann features
+    map[nameField] = name;
+    map[numberOfInputsField] = numberOfInputs;
+    map[initializerField] = initializer.name;
+    map[lossFunctionField] = lossFunction.name;
+    map[outputFunctionField] = outputFunction.name;
+    map[learningRateField] = learningRate;
+    map[isBuiltField] = isBuilt;
+
+    // Layers features
+    final numberOfLayers = layers.length;
+    map[numberOfLayersField] = numberOfLayers;
+    for (int i = 0; i < numberOfLayers; i++) {
+      final layer = layers[i];
+      final layerMap = Map();
+
+      layerMap[numberOfNeuronesField] = layer.numberOfNeurones;
+      layerMap[activationFunctionField] = layer.activationFunction.name;
+      layerMap[weightsField] = layer.weights.matrix;
+      layerMap[biasField] = layer.bias.matrix;
+
+      map['layer$i'] = layerMap;
+    }
+
+    // Save to file
+    final json = convert.json.encode(map);
+    try {
+      final dir = await pp.getApplicationDocumentsDirectory();
+      print(dir);
+      final file = io.File('$name.json');
+      await file.writeAsString(json);
+      return;
+    } catch (e) {
+      print(e);
+      return;
+    }
   }
 
   @override
   String toString() {
     if (isBuilt) {
       String summary =
-          '\n=============================\nArtificial Neural Network\n\nNumber of inputs: $numberOfInputs\nNumber of layers: ${layers.length}\n';
+          '\n=============================\nArtificial Neural Network\n\nName: $name\nNumber of inputs: $numberOfInputs\nNumber of layers: ${layers.length}\n';
       for (int i = 0; i < layers.length; i++) {
         summary += '\n----------------- Layer $i';
         summary += layers[i].toString();

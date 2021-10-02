@@ -19,4 +19,8 @@ class Sigmoid implements ActivationFunction {
   double derivative(double input) {
     return call(input) * (1 - call(input));
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'sigmoid';
 }

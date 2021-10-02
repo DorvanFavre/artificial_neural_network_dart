@@ -16,4 +16,8 @@ class NoOutputFunction implements OutputFunction {
   String summary() {
     return 'No output function';
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'none';
 }

@@ -22,4 +22,8 @@ class Relu implements ActivationFunction {
     } else
       return 1;
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'relu';
 }

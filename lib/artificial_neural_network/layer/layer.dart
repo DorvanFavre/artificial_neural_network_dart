@@ -7,7 +7,9 @@ import '../neurone.dart';
 abstract class Layer {
   factory Layer.dense(
       {required int numberOfNeurones,
-      required ActivationFunction activationFunction}) {
+      required ActivationFunction activationFunction,
+      Matrix? weights,
+      Matrix? bias}) {
     return DenseLayer(
         numberOfNeurones: numberOfNeurones,
         activationFunction: activationFunction);
@@ -27,4 +29,5 @@ abstract class Layer {
   Matrix biasesSlope = Matrix.empty();
   Matrix weights = Matrix.empty();
   Matrix bias = Matrix.empty();
+  late final ActivationFunction activationFunction;
 }

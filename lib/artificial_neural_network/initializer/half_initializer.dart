@@ -17,4 +17,8 @@ class HalfInitializer implements Initializer {
   double initializeWeight() {
     return 0.5;
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'half';
 }

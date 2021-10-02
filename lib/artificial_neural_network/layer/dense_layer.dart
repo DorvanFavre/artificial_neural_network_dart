@@ -6,10 +6,16 @@ import 'package:artificial_neural_network/artificial_neural_network/neurone.dart
 
 class DenseLayer implements Layer {
   final int numberOfNeurones;
-  final ActivationFunction activationFunction;
+  late final ActivationFunction activationFunction;
 
   DenseLayer(
-      {required this.numberOfNeurones, required this.activationFunction});
+      {required this.numberOfNeurones,
+      required this.activationFunction,
+      Matrix? weights,
+      Matrix? bias}) {
+    this.weights = weights ?? Matrix.empty();
+    this.bias = bias ?? Matrix.empty();
+  }
 
   Matrix weights = Matrix.empty();
   Matrix bias = Matrix.empty();

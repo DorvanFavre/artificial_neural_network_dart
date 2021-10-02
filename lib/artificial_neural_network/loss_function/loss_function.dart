@@ -9,9 +9,22 @@ abstract class LossFunction {
     return CrossEntropy();
   }
 
+  factory LossFunction.fromName(String name) {
+    switch (name) {
+      case 'mse':
+        return MeanSquaredError();
+      case 'crossEntropy':
+        return CrossEntropy();
+      default:
+        return MeanSquaredError();
+    }
+  }
+
   double call(
       {required List<double> expected, required List<double> predicted});
 
   double derivative(
       {required List<double> expected, required List<double> predicted});
+
+  final String name = '';
 }

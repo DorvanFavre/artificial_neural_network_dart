@@ -27,4 +27,8 @@ class MeanSquaredError implements LossFunction {
     }
     return -sum / expected.length;
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'mse';
 }

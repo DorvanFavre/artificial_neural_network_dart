@@ -8,8 +8,19 @@ abstract class Initializer {
   factory Initializer.half() {
     return HalfInitializer();
   }
+  factory Initializer.fromName(String name) {
+    switch (name) {
+      case 'random':
+        return RandomInitializer();
+      case 'half':
+        return HalfInitializer();
+      default:
+        return RandomInitializer();
+    }
+  }
 
   double initializeWeight();
   double initializeBias();
   String summary();
+  final String name = '';
 }

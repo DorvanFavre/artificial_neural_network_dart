@@ -19,4 +19,8 @@ class Softplus implements ActivationFunction {
   double derivative(double input) {
     return 1.0 / (1.0 + exp(-input));
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'softplus';
 }

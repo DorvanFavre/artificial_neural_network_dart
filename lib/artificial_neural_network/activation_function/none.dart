@@ -15,4 +15,8 @@ class None implements ActivationFunction {
   double derivative(double input) {
     return 1.0;
   }
+
+  @override
+  // TODO: implement name
+  String get name => 'none';
 }
