@@ -13,7 +13,7 @@ class NoOutputFunction implements OutputFunction {
   }
 
   @override
-  String summary() {
+  String toString() {
     return 'No output function';
   }
 

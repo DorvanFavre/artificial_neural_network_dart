@@ -25,9 +25,10 @@ void main() {
         outputFunction: OutputFunction.softmax(),
         learningRate: 0.01);
     ann.build();
-    //print(ann);
+    print(ann);
 
     // save ann
+    print('/n=========================');
     print('Try to save file');
     ann.saveToFile().then((value) => print('Saved !'));
 
@@ -35,6 +36,6 @@ void main() {
 
     // create ann from file
     final ann2 = await ANN4.fromFile(file: 'Dodo.json');
-    //print(ann2);
+    print(ann2);
   });
 }

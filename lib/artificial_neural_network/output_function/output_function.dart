@@ -22,7 +22,6 @@ abstract class OutputFunction {
   }
 
   const OutputFunction();
-  String summary();
 
   List<double> call(List<double> inputs);
   List<double> derivative(

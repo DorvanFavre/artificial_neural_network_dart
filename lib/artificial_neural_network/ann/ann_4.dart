@@ -61,11 +61,9 @@ class ANN4 implements ANN {
 
   static Future<ANN4> fromFile({required String file}) async {
     // Read file
-    final f = io.File(file);
+    final f = io.File(file.toLowerCase());
     final json = await f.readAsString();
     final map = convert.json.decode(json) as Map<String, dynamic>;
-
-    print(map);
 
     final name = map[nameField];
     final initializer = Initializer.fromName(map[initializerField]);
@@ -83,25 +81,18 @@ class ANN4 implements ANN {
       final activationFunction =
           ActivationFunction.fromName(map[layer][activationFunctionField]);
 
-      final a = map[layer][weightsField];
-      print('\n\n');
-      print(a);
-      print(a.runtimeType);
-      final b = a[0];
-      print(b);
-      print(b.runtimeType);
-      final c = (b as List).cast<double>();
-      print(c);
-      print(c.runtimeType);
-      final d = c[0] as double;
-      print(d);
-      print(d.runtimeType);
-
       final weights = Matrix(
-          matrix: (map[layer][weightsField] as List).cast<List<double>>());
+          matrix: (map[layer][weightsField] as List)
+              .map((row) =>
+                  (row as List).map((element) => element as double).toList())
+              .toList());
 
       final bias = Matrix(
-          matrix: ((map[layer][biasField] as List).cast<List>() as List)
+          matrix: ((map[layer][biasField] as List)
+                  .map((row) => (row as List)
+                      .map((element) => element as double)
+                      .toList())
+                  .toList())
               .cast<List<double>>());
 
       layers.add(DenseLayer(
@@ -180,9 +171,7 @@ class ANN4 implements ANN {
     // Save to file
     final json = convert.json.encode(map);
     try {
-      final dir = await pp.getApplicationDocumentsDirectory();
-      print(dir);
-      final file = io.File('$name.json');
+      final file = io.File('${name.toLowerCase()}.json');
       await file.writeAsString(json);
       return;
     } catch (e) {

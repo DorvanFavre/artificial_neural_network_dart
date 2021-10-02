@@ -29,7 +29,7 @@ class SoftMax implements OutputFunction {
   }
 
   @override
-  String summary() {
+  String toString() {
     return 'Softmax';
   }
 
