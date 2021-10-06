@@ -2,18 +2,16 @@ import 'dart:math';
 import 'dart:convert' as convert;
 import 'dart:io' as io;
 import 'package:artificial_neural_network/artificial_neural_network/layer/dense_layer.dart';
-import 'package:path_provider/path_provider.dart' as pp;
-
 import 'package:artificial_neural_network/artificial_neural_network/activation_function/activation_function.dart';
-import 'package:artificial_neural_network/artificial_neural_network/ann/ann.dart';
 import 'package:artificial_neural_network/artificial_neural_network/initializer/initializer.dart';
 import 'package:artificial_neural_network/artificial_neural_network/layer/layer.dart';
 import 'package:artificial_neural_network/artificial_neural_network/loss_function/loss_function.dart';
 import 'package:artificial_neural_network/artificial_neural_network/matrix/matrix.dart';
-import 'package:artificial_neural_network/artificial_neural_network/neurone.dart';
 import 'package:artificial_neural_network/artificial_neural_network/output_function/output_function.dart';
+import 'package:artificial_neural_network/artificial_neural_network/results/fit_info.dart';
 import 'package:artificial_neural_network/artificial_neural_network/results/learning_result.dart';
 import 'package:artificial_neural_network/artificial_neural_network/results/prediction_result.dart';
+import 'package:flutter/foundation.dart';
 
 /// ANN4 16.09.2021
 ///
@@ -36,7 +34,7 @@ import 'package:artificial_neural_network/artificial_neural_network/results/pred
 ///   - Softplus : take more time but avoid overflow so increase learning rate (0.01)
 ///   - Sigmoid : totaly avoid overflow, learning rate (0.1) <--- BEEEEEST
 ///
-class ANN4 implements ANN {
+class ANN4 {
   static final String nameField = 'name';
   static final String numberOfInputsField = 'numberOfInputs';
   static final String initializerField = 'initializer';
@@ -309,16 +307,24 @@ class ANN4 implements ANN {
         prediction: output, rowPrediction: data.matrix.first);
   }
 
+  // Remove when fit() is implemented
   String train(
       {required List<List<double>> batchVectors,
       required List<List<double>> batchLabels,
       required int maxEpoch,
       double minError = 0.0}) {
+    print('Train with $maxEpoch epochs:');
+    final startTime = DateTime.now();
+
     String summary = '';
     double error = 10.0;
     for (int epochIndex = 0;
         epochIndex < maxEpoch && error > minError;
         epochIndex++) {
+      if (epochIndex % (maxEpoch / 100) == 0) {
+        print('${((epochIndex / maxEpoch) * 100).toStringAsFixed(0)} %');
+      }
+
       final batchVectorsCopy = batchVectors.toList();
       final batchLabelsCopy = batchLabels.toList();
 
@@ -347,8 +353,19 @@ class ANN4 implements ANN {
       summary += '\nEpoch $epochIndex: Error -> $error';
     }
 
+    print('Done after ${DateTime.now().difference(startTime)}');
+
     summary += '\nMax epoch reached with error $error';
     return summary;
+  }
+
+  void fit() {
+    compute<void, void>((_) {
+      for (int i = 0; i < 10; i++) {
+        print(i);
+      }
+      return Future.value();
+    }, null);
   }
 
   @override

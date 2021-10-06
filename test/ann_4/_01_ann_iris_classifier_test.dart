@@ -9,7 +9,6 @@ import 'package:artificial_neural_network/preprocessing/one_hot_encode.dart';
 import 'package:artificial_neural_network/preprocessing/preprocessing.dart';
 import 'package:artificial_neural_network/preprocessing/split_data_set_into_training_set_and_test_set.dart';
 import 'package:artificial_neural_network/preprocessing/split_data_set_into_vectors_and_labels.dart';
-import 'package:artificial_neural_network/trainer/trainer.dart';
 import 'package:csv/csv.dart' as csv;
 import 'package:flutter_test/flutter_test.dart';
 

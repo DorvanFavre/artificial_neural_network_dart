@@ -21,6 +21,5 @@ class Sigmoid implements ActivationFunction {
   }
 
   @override
-  // TODO: implement name
   String get name => 'sigmoid';
 }
