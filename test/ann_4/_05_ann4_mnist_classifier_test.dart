@@ -17,6 +17,7 @@ import '../preprocessing_test.dart';
 void main() {
   test('Mnist classifier', () async {
     // Import the dataset
+    print('Import the dataset...');
     final file = await File('assets/mnist_train.csv').readAsString();
     final file2 = await File('assets/mnist_test.csv').readAsString();
     final trainSet = CsvToListConverter().convert(file, eol: '\n');
@@ -26,17 +27,20 @@ void main() {
 
     final trainSet2 = ToDouble(dataset: trainSet);
 
+    print('Split the dataset...');
     final trainSet3 = SplitDatasetIntoVectorsAndLabels(
         dataset: trainSet2.dataset,
         vectorIndexes: [for (int i = 0; i < 28 * 28; i++) i + 1],
         labelIndexes: [0]);
 
     // Scale data
+    print('Scale the vectors...');
     var trainVectors = [
       for (int i = 0; i < trainSet3.vectors.length; i++)
         [for (int j = 0; j < 28 * 28; j++) trainSet3.vectors[i][j] / 255.0]
     ];
 
+    print('One hot encode...');
     var trainLabels = trainSet3.labels;
     OneHotEncode(dataset: trainLabels, indexToEncode: 0, removeLast: false);
 
@@ -49,6 +53,7 @@ void main() {
       print(trainLabels[i]);
     }*/
 
+    print('Create the model...');
     // ANN
     final ann = ANN4(
         layers: [
@@ -67,10 +72,10 @@ void main() {
 
     ann.build();
 
-    print(ann);
+    //print(ann);
 
     // Test
-    print(ann.test(
+    /*print(ann.test(
         vectors: trainVectors,
         labels: trainLabels,
         evaluator: (predicted, observed) {
@@ -79,14 +84,16 @@ void main() {
             if (predicted[i] == 1.0) index = i;
           }
           return observed[index] == 1.0;
-        }));
+        }));*/
 
+    print('Train the model...');
     // Train
     print(ann.train(
-        batchVectors: trainVectors, batchLabels: trainLabels, maxEpoch: 100));
+        batchVectors: trainVectors, batchLabels: trainLabels, maxEpoch: 1));
 
     // Test
-    print(ann.test(
+    print('Test the model...');
+    /*ann.test(
         vectors: trainVectors,
         labels: trainLabels,
         evaluator: (predicted, observed) {
@@ -95,9 +102,9 @@ void main() {
             if (predicted[i] == 1.0) index = i;
           }
           return observed[index] == 1.0;
-        }));
+        });*/
 
-    print(ann);
+    //print(ann);
   });
 }
 

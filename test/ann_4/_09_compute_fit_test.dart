@@ -16,6 +16,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void fun(void _) async {
+  final bool create = true;
+  final bool fit = true;
+  final bool test = false;
+
   // Import the dataset
   final file = await File('assets/Social_Network_Ads.csv').readAsString();
   var dataset = CsvToListConverter().convert(file);
@@ -42,45 +46,50 @@ void fun(void _) async {
   //==========================================================================
 
   // Step 1 - Create model
+  if (create) {
+    // ANN
+    final ann = ANN4(
+        name: 'dodo',
+        layers: [
+          Layer.dense(
+              numberOfNeurones: 10,
+              activationFunction: ActivationFunction.softplus()),
+          Layer.dense(
+              numberOfNeurones: 10,
+              activationFunction: ActivationFunction.softplus()),
+          Layer.dense(
+              numberOfNeurones: 1,
+              activationFunction: ActivationFunction.sigmoid())
+        ],
+        numberOfInputs: 3,
+        initializer: Initializer.random(),
+        lossFunction: LossFunction.meanSquaredError(),
+        outputFunction: OutputFunction.none(),
+        learningRate: 0.1);
 
-  // ANN
-  /*final ann = ANN4(
-      name: 'dodo',
-      layers: [
-        Layer.dense(
-            numberOfNeurones: 3,
-            activationFunction: ActivationFunction.softplus()),
-        Layer.dense(
-            numberOfNeurones: 1,
-            activationFunction: ActivationFunction.sigmoid())
-      ],
-      numberOfInputs: 3,
-      initializer: Initializer.random(),
-      lossFunction: LossFunction.meanSquaredError(),
-      outputFunction: OutputFunction.none(),
-      learningRate: 0.1);
-
-  ann.build();
-  await ann.saveToFile();
-  print('done');
-  print(ann);*/
+    ann.build();
+    await ann.saveToFile();
+    print('done');
+    print(ann);
+  }
 
   //==========================================================================
 
   // Setp 2 - Load the model from file, train, save to file
 
-  print('Train model');
-  final ann = await ANN4.fromFile(file: 'dodo.json');
-  ann.train(
-      batchVectors: sets.trainingVectors,
-      batchLabels: sets.trainingLabels,
-      maxEpoch: 1000);
-  ann.saveToFile();
-
+  if (fit) {
+    print('Train model');
+    final ann = await ANN4.fromFile(file: 'dodo.json');
+    ann.train(
+        batchVectors: sets.trainingVectors,
+        batchLabels: sets.trainingLabels,
+        maxEpoch: 1);
+    ann.saveToFile();
+  }
   //==========================================================================
 
   // Setp 3 - Load from file and test the model
-/*
+  if (test) {
     final ann = await ANN4.fromFile(file: 'dodo.json');
     print(ann.test(
         vectors: sets.testVectors,
@@ -88,11 +97,11 @@ void fun(void _) async {
         evaluator: (predicted, observed) {
           return (predicted.first - observed.first).abs() < 0.5;
         }));
-    //ann.saveToFile();*/
+  }
 }
 
 void main() {
-  test('Fit with compute', () async {
+  test('hey', () async {
     await compute(fun, null);
   });
 }

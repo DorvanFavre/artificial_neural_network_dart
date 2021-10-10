@@ -336,7 +336,13 @@ class ANN4 {
         final index = Random().nextInt(batchVectorsCopy.length);
         final vector = batchVectorsCopy.removeAt(index);
         final label = batchLabelsCopy.removeAt(index);
+
+        // Learn
+        final stopWatch = Stopwatch()..start();
         final result = learn(vector: vector, label: label);
+        stopWatch.stop();
+        print('Time to learn: ${stopWatch.elapsedMicroseconds}');
+
         lastBatchLosses = result.loss;
         //summary += 'Batch $i: loss -> $lastBatchLosses';
         sum += lastBatchLosses;
