@@ -365,13 +365,15 @@ class ANN4 {
     return summary;
   }
 
-  void fit() {
-    compute<void, void>((_) {
-      for (int i = 0; i < 10; i++) {
-        print(i);
-      }
-      return Future.value();
-    }, null);
+  void fit({
+    required List<List<double>> vectors,
+    required List<List<double>> labels,
+  }) async {
+    // Load the progression
+    final f = io.File(name.toLowerCase());
+    final json = await f.readAsString();
+    final map = convert.json.decode(json) as Map<String, dynamic>;
+    final double microsecondsFromStart = map['microsecondsFromStart'] ?? 0.0;
   }
 
   @override

@@ -17,7 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void fun(void _) async {
   final bool create = true;
-  final bool fit = true;
+  final bool fit = false;
   final bool test = false;
 
   // Import the dataset
@@ -49,28 +49,25 @@ void fun(void _) async {
   if (create) {
     // ANN
     final ann = ANN4(
-        name: 'dodo',
+        name: 'mnist_model_01',
         layers: [
           Layer.dense(
-              numberOfNeurones: 10,
-              activationFunction: ActivationFunction.softplus()),
+              numberOfNeurones: 100,
+              activationFunction: ActivationFunction.relu()),
           Layer.dense(
               numberOfNeurones: 10,
-              activationFunction: ActivationFunction.softplus()),
-          Layer.dense(
-              numberOfNeurones: 1,
               activationFunction: ActivationFunction.sigmoid())
         ],
-        numberOfInputs: 3,
+        numberOfInputs: 28 * 28,
         initializer: Initializer.random(),
-        lossFunction: LossFunction.meanSquaredError(),
-        outputFunction: OutputFunction.none(),
-        learningRate: 0.1);
+        lossFunction: LossFunction.crossEntropy(),
+        outputFunction: OutputFunction.softmax(),
+        learningRate: 0.01);
 
     ann.build();
     await ann.saveToFile();
     print('done');
-    print(ann);
+    //print(ann);
   }
 
   //==========================================================================
